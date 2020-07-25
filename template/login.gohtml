@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    {{template "common-css"}}
+    <title>Sign In</title>
+</head>
+<body>
+    <main>
+        <form method="POST" action="/login" class="flex-center flex-column">
+            <h1> Sign In</h1>
+            <input type="text" name="email" placeholder="email" />
+            <input type="password" name="password"  placeholder="password" />
+            <button type="submit">Sign in</button>
+        </form>
+        {{if .}}
+            <p class="error">
+                {{.}}
+            </p>
+        {{end}}
+    </main>
+</body>
+</html>

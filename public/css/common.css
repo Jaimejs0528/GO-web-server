@@ -1,0 +1,92 @@
+:root {
+    --main-background-color: #666;
+    --container-background: #f5b226;
+}
+
+* {
+    margin: 0;
+    padding: 0;
+}
+
+body {
+    box-sizing: border-box;
+    min-height: 100vh;
+    background-color: var(--main-background-color);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+main {
+    background-color: var(--container-background);
+    padding: 1.2rem 2rem;
+    border-radius: 1rem;
+    max-width: 90vw;
+    animation: show-container 1s forwards ease-out;
+}
+
+@keyframes show-container {
+    0%{
+        opacity: 0;
+        transform: translateY(-150%) scale(0.9);
+    }
+    55%{
+        opacity: 1;
+        transform: translateY(0) scale(0.9);
+    }
+    65%{
+        box-shadow: 0 0 0px -2px var(--container-background);
+    }
+    100%{
+        box-shadow: 0 0 20px -2px var(--container-background);
+        transform: scale(1);
+    }
+}
+
+h1 {
+    font-family: 'Permanent Marker', cursive, Arial, sans-serif;
+    font-size: 4rem;
+    letter-spacing: 5px;
+}
+
+input, p, figcaption, button, .btn {
+    font-family: 'Amatic SC', Arial, Helvetica, sans-serif;
+    font-size: 1.8rem;
+}
+
+figcaption{
+    font-size: 1.3rem;
+    text-align: end;
+}
+
+.btn, button {
+        border: none;
+        background: var(--main-background-color);
+        outline: none;
+        outline-offset: 3px;
+        font-weight: bold;
+        padding: 0.3rem 1.5rem;
+        color: var(--container-background);
+        border-radius: 0.5rem;
+        transition: box-shadow 0.35s;
+        box-shadow: 5px 5px 1px #222 ;
+        margin-top: 0.8em;
+}
+
+.btn:hover, button:hover{
+    box-shadow: 3px 3px 1px #222 ;
+}
+
+.btn:active, button:active{
+    box-shadow: 1px 1px 1px #222 ;
+}
+
+.flex-center {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.flex-column{
+    flex-direction: column;
+}

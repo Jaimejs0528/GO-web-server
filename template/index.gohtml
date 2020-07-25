@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    {{template "common-css"}}
+    <link href="/public/css/index.css" rel="stylesheet">
+    <title>LandingPage</title>
+</head>
+
+<body>
+    <main>
+        <h1>Welcome {{.Name}}</h1>
+        <p>This is a simple landing page that just shows you a puppy</p>
+        <figure>
+            <img src="/public/images/puppy.png" />
+            <figcaption>A beautiful puppy</figcaption>
+            </picture>
+            <a class="btn" href="/logout">Logout</a>
+    </main>
+</body>
+
+</html>
