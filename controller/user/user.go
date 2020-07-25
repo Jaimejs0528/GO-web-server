@@ -1,6 +1,7 @@
 package user
 
 import (
+	"errors"
 	"fmt"
 
 	"golang.org/x/crypto/bcrypt"
@@ -36,6 +37,9 @@ func GetUser(email string) *User {
 
 // NewUser adds a new user to memory DB and returns it, if it isn't exist
 func NewUser(email, name, password string) (*User, error) {
+	if email == "" || name == "" || password == "" {
+		return nil, errors.New("There are empty fields")
+	}
 	if GetUser(email) != nil {
 		return nil, fmt.Errorf("User with email %s, already exist", email)
 	}

@@ -90,3 +90,16 @@ figcaption{
 .flex-column{
     flex-direction: column;
 }
+
+.actions{
+    margin: .6rem 0;
+    justify-content: space-around;
+}
+
+.actions p {
+    margin-top: 0.5rem;
+}
+
+.actions a {
+    margin-left: 1rem;
+}

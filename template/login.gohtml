@@ -12,13 +12,16 @@
             <h1> Sign In</h1>
             <input type="text" name="email" placeholder="email" />
             <input type="password" name="password"  placeholder="password" />
-            <button type="submit">Sign in</button>
-        </form>
-        {{if .}}
+            {{if .}}
             <p class="error">
                 {{.}}
             </p>
-        {{end}}
+            {{end}}
+            <div class="flex-center flex-column actions">
+                <button type="submit">Sign in</button>
+                <p> Do you have an account?<a href="/sign-up">create account</a></p>
+            </div>
+        </form>
     </main>
 </body>
 </html>

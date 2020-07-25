@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    {{template "common-css"}}
+    <title>Sign Up</title>
+</head>
+<body>
+    <main>
+        <form method="POST" action="/sign-up" class="flex-center flex-column">
+            <h1> Sign Up</h1>
+            <input type="text" placeholder="email" name="email" />
+            <input type="text" placeholder="name" name="name" />
+            <input type="password" placeholder="password" name="password" />
+            <input type="password" placeholder="password confirmation" name="password-confirmation" />
+            {{if .}}
+            <p class="error">
+                {{.}}
+            </p>
+            {{end}}
+            <div class="flex-center actions">
+                <button type="submit">Sign up</button>
+                <a href="/login" class="btn" type="submit">Sign in</a>
+            </div>
+        </form>
+    </main>
+</body>
+</html>

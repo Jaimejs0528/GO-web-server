@@ -21,7 +21,18 @@ func login(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	template.ServeTemplate("login.gohtml", nil).ServeHTTP(w, r)
+}
 
+func signUp(w http.ResponseWriter, r *http.Request) {
+	if r.Method == http.MethodPost {
+		auth.SignUp(w, r)
+		return
+	}
+	if auth.GetCurrentSession(r) != nil {
+		http.Redirect(w, r, "/", http.StatusSeeOther)
+		return
+	}
+	template.ServeTemplate("signup.gohtml", nil).ServeHTTP(w, r)
 }
 
 func index(w http.ResponseWriter, r *http.Request) {
@@ -34,6 +45,7 @@ func main() {
 	http.Handle("/public/", http.StripPrefix("/public", fs))
 	http.Handle("/", auth.NewPrivateHandler(index))
 	http.HandleFunc("/login", login)
+	http.HandleFunc("/sign-up", signUp)
 	http.HandleFunc("/logout", auth.LogOut)
 	fmt.Println("serving on port 3000")
 	go session.GoCleanExpireSessions()
