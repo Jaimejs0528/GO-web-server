@@ -9,34 +9,27 @@ import (
 	"github.com/Jaimejs0528/practice/golang-udemy/cookie-exercises/my-own/controller/user"
 )
 
-// PrivateHandler route that needs a active session
-type PrivateHandler struct {
-	handle http.HandlerFunc
-}
-
-// NewPrivateHandler creates a new private Handler that needs a active session
-func NewPrivateHandler(handle http.HandlerFunc) PrivateHandler {
-	return PrivateHandler{handle}
-}
-
-func (pr PrivateHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
-	sessionCookie := getSessionCookie(r)
-	if sessionCookie == nil {
-		http.Redirect(w, r, "/login", http.StatusSeeOther)
-		return
-	}
-	currentSession := session.GetSession(sessionCookie.Value)
-	if currentSession == nil {
-		sessionCookie.MaxAge = -1
-		session.RemoveSession(sessionCookie.Value)
+// PrivateMiddleware route that needs a active session
+func PrivateMiddleware(handler http.Handler) http.HandlerFunc {
+	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		sessionCookie := getSessionCookie(r)
+		if sessionCookie == nil {
+			http.Redirect(w, r, "/login", http.StatusSeeOther)
+			return
+		}
+		currentSession := session.GetSession(sessionCookie.Value)
+		if currentSession == nil {
+			sessionCookie.MaxAge = -1
+			session.RemoveSession(sessionCookie.Value)
+			http.SetCookie(w, sessionCookie)
+			http.Redirect(w, r, "/login", http.StatusSeeOther)
+			return
+		}
+		sessionCookie.MaxAge = session.MaxSeconds
+		session.RenovateSessionTime(sessionCookie.Value)
 		http.SetCookie(w, sessionCookie)
-		http.Redirect(w, r, "/login", http.StatusSeeOther)
-		return
-	}
-	sessionCookie.MaxAge = session.MaxSeconds
-	session.RenovateSessionTime(sessionCookie.Value)
-	http.SetCookie(w, sessionCookie)
-	pr.handle.ServeHTTP(w, r)
+		handler.ServeHTTP(w, r)
+	})
 }
 
 // GetCurrentSession returns the current session

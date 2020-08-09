@@ -41,13 +41,13 @@ func index(w http.ResponseWriter, r *http.Request) {
 }
 
 func main() {
+	go session.GoCleanExpireSessions()
 	fs := http.FileServer(http.Dir("public"))
 	http.Handle("/public/", http.StripPrefix("/public", fs))
-	http.Handle("/", auth.NewPrivateHandler(index))
+	http.Handle("/", auth.PrivateMiddleware(http.HandlerFunc(index)))
 	http.HandleFunc("/login", login)
 	http.HandleFunc("/sign-up", signUp)
 	http.HandleFunc("/logout", auth.LogOut)
 	fmt.Println("serving on port 3000")
-	go session.GoCleanExpireSessions()
 	log.Fatal(http.ListenAndServe(":3000", nil))
 }
