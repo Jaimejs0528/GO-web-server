@@ -148,6 +148,7 @@ func SignUp(w http.ResponseWriter, r *http.Request) {
 			return
 		}
 		loginAndRedirect(email, w, r)
+		return
 	}
 
 	http.Redirect(w, r, "/", http.StatusSeeOther)

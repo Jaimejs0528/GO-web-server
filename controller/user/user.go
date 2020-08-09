@@ -3,6 +3,7 @@ package user
 import (
 	"errors"
 	"fmt"
+	"sync"
 
 	"golang.org/x/crypto/bcrypt"
 )
@@ -21,14 +22,18 @@ func (u *User) PasswordMatching(password []byte) bool {
 }
 
 var userDB map[string]User
+var mutextUsers sync.Mutex
 
 func init() {
 	userDB = make(map[string]User)
+	mutextUsers = sync.Mutex{}
 	NewUser("jaimejimenezisi@gmail.com", "Jaime Jimenez", "12345678") // creating my account
 }
 
 // GetUser returns a user by email if exist or nil isn't exist
 func GetUser(email string) *User {
+	mutextUsers.Lock()
+	defer mutextUsers.Unlock()
 	if u, ok := userDB[email]; ok {
 		return &u
 	}
@@ -48,6 +53,8 @@ func NewUser(email, name, password string) (*User, error) {
 		return nil, err
 	}
 	newUser := User{email, name, cryptedPassword}
+	mutextUsers.Lock()
 	userDB[email] = newUser
+	mutextUsers.Unlock()
 	return &newUser, nil
 }

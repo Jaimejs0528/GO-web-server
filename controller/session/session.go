@@ -14,10 +14,10 @@ import (
 type Session struct {
 	UserEmail  string
 	LastAction time.Time
-	mutex      *sync.Mutex
 }
 
 var sessionsDB map[string]Session
+var mutexSession sync.Mutex
 
 // MaxSeconds amount in seconds that sessions will durate
 const MaxSeconds = 60
@@ -25,6 +25,7 @@ const expirationTime = time.Second * MaxSeconds
 
 func init() {
 	sessionsDB = make(map[string]Session)
+	mutexSession = sync.Mutex{}
 }
 
 // CreateSession creates a new session, returning the sessionID and error
@@ -34,8 +35,10 @@ func CreateSession(userEmail string) (string, error) {
 		if err != nil {
 			return "", err
 		}
-		newSession := Session{userEmail, time.Now(), &sync.Mutex{}}
+		newSession := Session{userEmail, time.Now()}
+		mutexSession.Lock()
 		sessionsDB[UUID.String()] = newSession
+		mutexSession.Unlock()
 		return UUID.String(), nil
 	}
 	return "", fmt.Errorf("The user doesn't exist")
@@ -43,6 +46,8 @@ func CreateSession(userEmail string) (string, error) {
 
 // GetSession return a session
 func GetSession(uuidS string) *Session {
+	mutexSession.Lock()
+	defer mutexSession.Unlock()
 	if session, ok := sessionsDB[uuidS]; ok {
 		return &session
 	}
@@ -51,11 +56,11 @@ func GetSession(uuidS string) *Session {
 
 // RenovateSessionTime renovates last action session to Now
 func RenovateSessionTime(uuidS string) error {
+	mutexSession.Lock()
+	defer mutexSession.Unlock()
 	if session, ok := sessionsDB[uuidS]; ok {
-		session.mutex.Lock()
 		session.LastAction = time.Now()
 		sessionsDB[uuidS] = session
-		session.mutex.Unlock()
 		return nil
 	}
 	return errors.New("Session doesn't exist")
@@ -63,10 +68,10 @@ func RenovateSessionTime(uuidS string) error {
 
 // RemoveSession remove a session from DB, return true if success, false if doesn't exist that session
 func RemoveSession(uuidS string) bool {
-	if session, ok := sessionsDB[uuidS]; ok {
-		session.mutex.Lock()
+	mutexSession.Lock()
+	defer mutexSession.Unlock()
+	if _, ok := sessionsDB[uuidS]; ok {
 		delete(sessionsDB, uuidS)
-		session.mutex.Unlock()
 		return true
 	}
 	return false
@@ -74,16 +79,16 @@ func RemoveSession(uuidS string) bool {
 
 // CleanExpiredSessions remove all sessions that already have expired
 func CleanExpiredSessions() {
+	mutexSession.Lock()
 	for key, session := range sessionsDB {
-		session.mutex.Lock()
 		currentTime := time.Now()
 		diffTime := session.LastAction.Add(expirationTime).Sub(currentTime)
 		if diffTime < 0 {
 			fmt.Println(key, session.LastAction, session.UserEmail)
 			delete(sessionsDB, key)
 		}
-		session.mutex.Unlock()
 	}
+	mutexSession.Unlock()
 }
 
 // GoCleanExpireSessions remove all sessions that already have expired (Use it with secondary goroutine)
